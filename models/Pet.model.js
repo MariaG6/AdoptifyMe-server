@@ -1,9 +1,13 @@
 const { Schema, model } = require("mongoose");
 
 const petSchema = new Schema({
-  typeOfAnimal: String,
-  shopId: { type: Schema.Types.ObjectId, ref: "Shop" },
-  ownerId: { type: Schema.Types.ObjectId, ref: "User" },
+  typeOfAnimal: {
+    type: String,
+    enum: ["dog", "cat"],
+    required: [true, "Type is required."],
+  },
+  shop: { type: Schema.Types.ObjectId, ref: "Shop" },
+  owner: { type: Schema.Types.ObjectId, ref: "User" },
   breed: String,
   age: {
     type: String,
@@ -17,11 +21,12 @@ const petSchema = new Schema({
   },
   name: {
     type: String,
+    default: 'Unknown',
     required: [true, "Name is required."],
   },
   gender: {
     type: String,
-    enum: ["Male", "Female", "Unknown"],
+    enum: ["male", "female", "unknown"],
     required: [true, "Gender is required."],
   },
   dateOfBirth: Date,
@@ -29,7 +34,7 @@ const petSchema = new Schema({
     type: String,
     // add default img
   },
-  images: Array,
+  images: [String],
   description: String,
   isAdopted: { type: Boolean, default: false },
   isReported: { type: Boolean, default: false },
