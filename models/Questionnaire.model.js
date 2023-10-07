@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { Schema, model } = require("mongoose");
 
 const questionnaireSchema = new mongoose.Schema({
   designatedArea: {
