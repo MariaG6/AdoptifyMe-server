@@ -1,5 +1,6 @@
 const { isAuthenticated } = require("../middleware/jwt.middleware");
 const Pet = require("../models/Pet.model");
+const Questionnaire = require("../models/Questionnaire.model");
 const router = require("express").Router();
 
 //POST
@@ -53,6 +54,66 @@ router.post("/new", isAuthenticated, (req, res) => {
       .catch((err) => {
         res.json(err);
       });
+  }
+});
+
+router.post("/:id/adopt", isAuthenticated, async (req, res) => {
+  const {
+    designatedArea,
+    landlordAware,
+    whereStaysWhenNotHome,
+    familyInfo,
+    childrenCharacteristics,
+    annualExpenses,
+    employed,
+    vacationPlans,
+    timeAloneAtHome,
+    expenses,
+    suitableFood,
+    previousAnimals,
+    whyAdopt,
+    walkingFrequency,
+    willingnessToTrain,
+    behaviorResponse,
+    preAdoptionFollowUps,
+  } = req.body;
+  const { id } = req.params;
+
+  const adoptedPet = await Pet.findById(id);
+
+  const { _id } = req.payload
+
+  if (!adoptedPet) {
+    return res.status(404).json({ message: "Pet not found." });
+  } else {
+    Questionnaire.create({
+      pet: id,
+      shop: adoptedPet.shop,
+      user: _id,
+      designatedArea,
+      landlordAware,
+      whereStaysWhenNotHome,
+      familyInfo,
+      childrenCharacteristics,
+      annualExpenses,
+      employed,
+      vacationPlans,
+      timeAloneAtHome,
+      expenses,
+      suitableFood,
+      previousAnimals,
+      whyAdopt,
+      walkingFrequency,
+      willingnessToTrain,
+      behaviorResponse,
+      preAdoptionFollowUps,
+    })
+    .then(createdQue => {
+        res.status(200).json({message:"Questionnarie successuffy created"})
+    })
+    .catch((err) => {
+      res.status(500).json(err);
+    });
   }
 });
 
