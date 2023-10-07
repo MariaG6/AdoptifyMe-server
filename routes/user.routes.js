@@ -4,7 +4,7 @@ const User = require("../models/User.model");
 const router = express.Router();
 
 // update user by id
-router.put("/:id", isAuthenticated, async (req, res, next) => {
+router.patch("/:id", isAuthenticated, async (req, res, next) => {
   const { fullName, phoneNumber, address } = req.body;
   try {
     const updatedUser = await User.findByIdAndUpdate(
@@ -18,9 +18,11 @@ router.put("/:id", isAuthenticated, async (req, res, next) => {
       return res.status(404).json({ error: "Admin not found" });
     }
 
-    delete updatedUser.hashedPassword;
+    const dataToReturn = updatedUser.toJSON();
 
-    res.status(201).json(updatedUser);
+    delete dataToReturn.hashedPassword;
+
+    res.status(201).json(dataToReturn);
   } catch (err) {
     next(err);
   }
@@ -30,8 +32,9 @@ router.put("/:id", isAuthenticated, async (req, res, next) => {
 router.delete("/:id", isAuthenticated, async (req, res, next) => {
   try {
     const user = await User.findByIdAndDelete(req.params.id);
+
     if (!user) {
-      return res.status(404).json({ error: "User not found" });
+      return res.status(404).json({ error: "User does not exist" });
     }
     res.status(204).json({ message: "User deleted successfully" });
   } catch (err) {
@@ -45,12 +48,14 @@ router.get("/:id", isAuthenticated, async (req, res, next) => {
     const user = await User.findById(req.params.id);
 
     if (!user) {
-      return res.status(404).json({ error: "User not found" });
+      return res.status(404).json({ error: "User does not exist" });
     }
 
-    delete user.hashedPassword;
+    const dataToReturn = user.toJSON();
 
-    res.status(200).json(user);
+    delete dataToReturn.hashedPassword;
+
+    res.status(200).json(dataToReturn);
   } catch (err) {
     next(err);
   }

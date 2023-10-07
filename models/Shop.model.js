@@ -1,12 +1,14 @@
 const { Schema, model } = require("mongoose");
 
 const shopSchema = new Schema({
-  shopName: String,
-  address: { street: String, postalCode: String, country: String },
-  phoneNumber: String,
+  shopName: {
+    type:String,
+    required: [true, "Shop name is required."],
+  },
   website: String,
   shopLogo: String,
   pets: [{ type: Schema.Types.ObjectId, ref: "Pet" }],
+  owner: [{ type: Schema.Types.ObjectId, ref: "User" }],
 });
 
 const Shop = model("Shop", shopSchema);

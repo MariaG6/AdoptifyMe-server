@@ -70,14 +70,14 @@ router.get(
 );
 
 // creates new admin
-router.get(
-  "/create-admin",
-  isAuthenticated,
-  isAdminCheckMiddleware,
-  (req, res, next) => {
-    res.status(201).json("All good in here");
-  }
-);
+// router.get(
+//   "/create-admin",
+//   isAuthenticated,
+//   isAdminCheckMiddleware,
+//   (req, res, next) => {
+//     res.status(201).json("All good in here");
+//   }
+// );
 
 // delete admin by id
 router.delete(
@@ -88,9 +88,9 @@ router.delete(
     try {
       const admin = await User.findByIdAndDelete(req.params.id);
       if (!admin) {
-        return res.status(404).json({ error: "Admin not found" });
+        return res.status(404).json({ error: "User does not exist" });
       }
-      res.status(204).json({ message: "Admin deleted successfully" });
+      res.status(204).json({ message: "User deleted successfully" });
     } catch (err) {
       next(err);
     }
@@ -98,7 +98,7 @@ router.delete(
 );
 
 // update admin info
-router.put(
+router.patch(
   "/:id",
   isAuthenticated,
   isAdminCheckMiddleware,
@@ -115,7 +115,12 @@ router.put(
       if (!updatedAdmin) {
         return res.status(404).json({ error: "Admin not found" });
       }
-      res.status(201).json(updatedAdmin);
+
+      const dataToReturn = updatedAdmin.toJSON();
+
+      delete dataToReturn.hashedPassword;
+
+      res.status(201).json(dataToReturn);
     } catch (err) {
       next(err);
     }
@@ -133,10 +138,71 @@ router.get(
       if (!admin) {
         return res.status(404).json({ error: "Admin not found" });
       }
+      const dataToReturn = admin.toJSON();
 
-      delete admin.hashedPassword;
+      delete dataToReturn.hashedPassword;
 
-      res.status(201).json(admin);
+      res.status(201).json(dataToReturn);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+// reset users password
+router.patch(
+  "/reset-user-password",
+  isAuthenticated,
+  isAdminCheckMiddleware,
+  async (req, res, next) => {
+    const { email, newPassword } = req.body;
+
+    try {
+      // Check if email or password or name are provided as empty strings
+      if (email === "" || newPassword === "") {
+        res
+          .status(400)
+          .json({ message: "Provide email and new password of user" });
+        return;
+      }
+
+      // This regular expression check that the email is of a valid format
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+      if (!emailRegex.test(email)) {
+        res.status(400).json({ message: "Provide a valid email address." });
+        return;
+      }
+
+      // This regular expression checks password for special characters and minimum length
+      const passwordRegex = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}/;
+      if (!passwordRegex.test(password)) {
+        res.status(400).json({
+          message:
+            "Password must have at least 6 characters and contain at least one number, one lowercase and one uppercase letter.",
+        });
+        return;
+      }
+
+      const foundUser = await User.find({ email: email });
+      if (!foundUser) {
+        return res.status(404).json({ error: "User does not exist" });
+      }
+
+      // If email is unique, proceed to hash the password
+      const salt = bcrypt.genSaltSync(process.env.SALT_ROUNDS);
+      const hashedPassword = bcrypt.hashSync(newPassword, salt);
+
+      const updatedUser = await User.findByIdAndUpdate(
+        foundUser._id,
+        { hashedPassword },
+        { new: true }
+      );
+
+      const dataToReturn = updatedUser.toJSON();
+
+      delete dataToReturn.hashedPassword;
+
+      res.status(201).json(dataToReturn);
     } catch (err) {
       next(err);
     }
