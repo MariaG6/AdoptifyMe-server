@@ -4,6 +4,7 @@ const User = require("../models/User.model");
 const isAdminCheckMiddleware = require("../middleware/isAdmin.middleware");
 const Shop = require("../models/Shop.model");
 const Pet = require("../models/Pet.model");
+const Questionnaire = require("../models/Questionnaire.model");
 const router = express.Router();
 
 // get all admins
@@ -208,5 +209,54 @@ router.patch(
     }
   }
 );
+
+// get all questionnaires
+router.get(
+  "/applications",
+  isAuthenticated,
+  isAdminCheckMiddleware,
+  async (req, res) => {
+    try {
+      const applications = await Questionnaire.find().populate([
+        "pet",
+        "shop",
+        "user",
+      ]);
+      res.status(200).json({ applications });
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+// check and add admin
+router.get("/check-admin", async (req, res) => {
+  try {
+    const existingAdmin = await User.findOne({
+      email: process.env.ADMIN_EMAIL,
+    });
+
+    if (existingAdmin) {
+      return res.status(200).json({ message: "Admin already exists" });
+    }
+
+    // If email is unique, proceed to hash the password
+    const salt = bcrypt.genSaltSync(process.env.SALT_ROUNDS);
+    const hashedPassword = bcrypt.hashSync(process.env.ADMIN_PASSWORD, salt);
+
+    await User.create({
+      email: process.env.ADMIN_EMAIL,
+      hashedPassword,
+      fullName: process.env.ADMIN_FULLNAME,
+      phoneNumber: process.env.ADMIN_PHONE,
+      address: process.env.ADMIN_EMAIL,
+      isAdmin: true,
+    });
+
+    res.status(201).json({ message: "Admin added successfully!" });
+  } catch (err) {
+    next(err);
+  }
+});
 
 module.exports = router;
