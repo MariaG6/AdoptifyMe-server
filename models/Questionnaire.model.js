@@ -53,7 +53,7 @@ const questionnaireSchema = new mongoose.Schema({
   },
   whyAdopt: {
     type: String,
-    required: [true, "This field is required."],
+    required: [true, "This field is required."], 
   },
   walkingFrequency: {
     type: String,

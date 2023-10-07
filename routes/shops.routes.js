@@ -96,14 +96,6 @@ router.delete("/:id", isAuthenticated, (req, res) => {
   }
 });
 
-// TODO:
-// Get all the questionnaries of a shop
-//  if the _id in req.payload === owner of the shop => means the user making the request is the owner of that shop
-// endpoint to get Questionnaire by id
-
-// endpoint to accept application
-// endpoint to reject application
-
 // Questionnaries routes
 
 // Get all the questionnaries of a shop
