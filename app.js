@@ -21,11 +21,18 @@ app.use("/api", indexRoutes);
 const authRoutes = require("./routes/auth.routes");
 app.use("/auth", authRoutes);
 
-const petsRoutes = require("./routes/pets.routes");
-app.use('/pets',petsRoutes)
-
 const shopsRoutes = require("./routes/shops.routes");
 app.use('/shops',shopsRoutes)
+const userRoutes = require("./routes/user.routes");
+app.use("/users", userRoutes);
+
+const adminRoutes = require("./routes/admin.routes");
+app.use("/admin", adminRoutes);
+const petRoutes = require("./routes/pet.routes");
+app.use('/pets',petRoutes)
+
+const shopRoutes = require("./routes/shop.routes");
+// app.use('/shop',shopRoutes)
 
 // ❗ To handle errors. Routes that don't exist or errors that you handle in specific routes
 require("./error-handling")(app);
