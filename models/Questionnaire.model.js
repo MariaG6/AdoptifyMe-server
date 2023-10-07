@@ -53,7 +53,7 @@ const questionnaireSchema = new mongoose.Schema({
   },
   whyAdopt: {
     type: String,
-    required: [true, "This field is required."],
+    required: [true, "This field is required."], 
   },
   walkingFrequency: {
     type: String,
@@ -74,6 +74,7 @@ const questionnaireSchema = new mongoose.Schema({
   pet: { type: Schema.Types.ObjectId, ref: "Pet" },
   shop: { type: Schema.Types.ObjectId, ref: "Shop" },
   user: { type: Schema.Types.ObjectId, ref: "User" },
+  isAccepted:{ type: Boolean, default: false },
 });
 
 const Questionnaire = mongoose.model("Questionnaire", questionnaireSchema);
