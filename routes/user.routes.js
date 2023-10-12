@@ -2,31 +2,37 @@ const express = require("express");
 const { isAuthenticated } = require("../middleware/jwt.middleware");
 const User = require("../models/User.model");
 const router = express.Router();
+const fileUploader = require("../config/cloudinary.config");
 
 // update user by id
-router.patch("/:id", isAuthenticated, async (req, res, next) => {
-  const { fullName, phoneNumber, address } = req.body;
-  try {
-    const updatedUser = await User.findByIdAndUpdate(
-      req.params.id,
-      { fullName, phoneNumber, address },
-      {
-        new: true,
+router.patch(
+  "/:id",
+  isAuthenticated,
+  fileUploader.single("profilePicture"),
+  async (req, res, next) => {
+    const { fullName, phoneNumber, address } = req.body;
+    try {
+      const updatedUser = await User.findByIdAndUpdate(
+        req.params.id,
+        { fullName, phoneNumber, address, profilePicture: req.file.path },
+        {
+          new: true,
+        }
+      );
+      if (!updatedUser) {
+        return res.status(404).json({ error: "Admin not found" });
       }
-    );
-    if (!updatedUser) {
-      return res.status(404).json({ error: "Admin not found" });
+
+      const dataToReturn = updatedUser.toJSON();
+
+      delete dataToReturn.hashedPassword;
+
+      res.status(201).json(dataToReturn);
+    } catch (err) {
+      next(err);
     }
-
-    const dataToReturn = updatedUser.toJSON();
-
-    delete dataToReturn.hashedPassword;
-
-    res.status(201).json(dataToReturn);
-  } catch (err) {
-    next(err);
   }
-});
+);
 
 // delete user by id
 router.delete("/:id", isAuthenticated, async (req, res, next) => {

@@ -2,11 +2,27 @@ const { isAuthenticated } = require("../middleware/jwt.middleware");
 const Pet = require("../models/Pet.model");
 const Questionnaire = require("../models/Questionnaire.model");
 const router = require("express").Router();
+const fileUploader = require("../config/cloudinary.config");
+let fileURL;
 
 //POST
 
 // Create a new pet
-router.post("/new", isAuthenticated, (req, res) => {
+router.post("/new", isAuthenticated, fileUploader.single('profilePicture'), fileUploader.array('images'), (req, res) => {
+
+  // Check if profilePicture exits, if not add default image
+  if (!profilePicture) {
+    fileURL =
+     'https://img.freepik.com/free-vector/flat-design-dog-cat-silhouette_23-2150283212.jpg?w=740&t=st=1697112348~exp=1697112948~hmac=8c585812ac327c2475bfd16aeaa1596e4f231468841d6c31707ca2bf55af89ab'
+  } else {
+    fileURL = req.file.path;
+  }
+
+  // Handle images
+  const imagesURL = req.files.map((element)=>{
+    return element.path
+  })
+
   const {
     typeOfAnimal,
     shop,
@@ -17,13 +33,12 @@ router.post("/new", isAuthenticated, (req, res) => {
     name,
     gender,
     dateOfBirth,
-    profilePicture,
     description,
-    images,
     isAdopted,
     isReported,
   } = req.body;
 
+  // Check if desccription is empty string
   if (!description) {
     return res
       .status(400)
@@ -39,9 +54,9 @@ router.post("/new", isAuthenticated, (req, res) => {
       name,
       gender,
       dateOfBirth,
-      profilePicture,
+      profilePicture:fileURL,
       description,
-      images,
+      images: imagesURL,
       isAdopted,
       isReported,
     })
@@ -57,6 +72,7 @@ router.post("/new", isAuthenticated, (req, res) => {
   }
 });
 
+// Create a quesstionare of a specific pet by id
 router.post("/:id/adopt", isAuthenticated, async (req, res) => {
   const {
     designatedArea,
@@ -81,7 +97,7 @@ router.post("/:id/adopt", isAuthenticated, async (req, res) => {
 
   const adoptedPet = await Pet.findById(id);
 
-  const { _id } = req.payload
+  const { _id } = req.payload;
 
   if (!adoptedPet) {
     return res.status(404).json({ message: "Pet not found." });
@@ -108,19 +124,19 @@ router.post("/:id/adopt", isAuthenticated, async (req, res) => {
       behaviorResponse,
       preAdoptionFollowUps,
     })
-    .then(createdQue => {
-        res.status(200).json({message:"Questionnarie successuffy created"})
-    })
-    .catch((err) => {
-      res.status(500).json(err);
-    });
+      .then((createdQue) => {
+        res.status(200).json({ message: "Questionnarie successuffy created" });
+      })
+      .catch((err) => {
+        res.status(500).json(err);
+      });
   }
 });
 
 //GET
 
 // Get all pets
-router.get("/allPets", isAuthenticated, (req, res) => {
+router.get("/allPets", (req, res) => {
   Pet.find()
     .then((allPets) => {
       res.json(allPets);
@@ -131,7 +147,7 @@ router.get("/allPets", isAuthenticated, (req, res) => {
 });
 
 // Get a specific pet by ID
-router.get("/:id", isAuthenticated, (req, res) => {
+router.get("/:id", (req, res) => {
   const { id } = req.params;
 
   Pet.findById(id)
@@ -150,14 +166,17 @@ router.get("/:id", isAuthenticated, (req, res) => {
 //PUT
 
 // Update a pet by ID
-router.put("/:id", isAuthenticated, (req, res) => {
+router.put("/:id", isAuthenticated,fileUploader.single('profilePicture'), fileUploader.array('images'), (req, res) => {
   const { id } = req.params;
+    // Handle images
+    const imagesURL = req.files.map((element)=>{
+      return element.path
+    })
+
   const {
     shop,
     owner,
     description,
-    images,
-    profilePicture,
     breed,
     name,
     isAdopted,
@@ -170,8 +189,8 @@ router.put("/:id", isAuthenticated, (req, res) => {
       shop,
       owner,
       description,
-      images,
-      profilePicture,
+      images:imagesURL,
+      profilePicture:req.file.path,
       breed,
       name,
       isAdopted,

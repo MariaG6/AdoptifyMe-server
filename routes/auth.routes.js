@@ -1,5 +1,7 @@
 const express = require("express");
 const router = express.Router();
+const fileUploader = require('../config/cloudinary.config');
+let fileURL
 
 // ℹ️ Handles password encryption
 const bcrypt = require("bcrypt");
@@ -17,14 +19,21 @@ const { isAuthenticated } = require("../middleware/jwt.middleware.js");
 const saltRounds = 10;
 
 // POST /auth/signup  - Creates a new user in the database
-router.post("/signup", (req, res, next) => {
+router.post("/signup", fileUploader.single('profilePicture'), (req, res, next) => {
   // assuming address comes in the form address: {}
-  const { email, password, fullName, phoneNumber, address } = req.body;
+  const { email, password, fullName, phoneNumber, address} = req.body;
 
   // Check if email or password or name are provided as empty strings
   if (email === "" || password === "" || fullName === "") {
     res.status(400).json({ message: "Provide email, password and name" });
     return;
+  }
+
+  // Check if profilePicture exits, if not add default image
+  if(!profilePicture){
+    fileURL = 'https://img.freepik.com/free-photo/user-profile-icon-front-side-with-white-background_187299-40010.jpg?w=740&t=st=1697111034~exp=1697111634~hmac=e362fd34e7a54368b8dc48bd44e02de9b090f35456c96e7d03f009737e7f8ac9'
+  } else{
+    fileURL = req.file.path
   }
 
   // This regular expression check that the email is of a valid format
@@ -65,6 +74,7 @@ router.post("/signup", (req, res, next) => {
         fullName,
         phoneNumber,
         address,
+        profilePicture: fileURL
       });
     })
     .then((createdUser) => {
