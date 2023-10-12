@@ -5,8 +5,6 @@ const isAdminCheckMiddleware = require("../middleware/isAdmin.middleware");
 const Shop = require("../models/Shop.model");
 const Pet = require("../models/Pet.model");
 const router = express.Router();
-const fileUploader = require("../config/cloudinary.config");
-
 
 // get all admins
 router.get(
@@ -103,13 +101,13 @@ router.delete(
 router.patch(
   "/:id",
   isAuthenticated,
-  isAdminCheckMiddleware, fileUploader('profilePicture'),
+  isAdminCheckMiddleware,
   async (req, res, next) => {
-    const { fullName, phoneNumber, address } = req.body;
+    const { fullName, phoneNumber, address, profilePicture } = req.body;
     try {
       const updatedAdmin = await User.findByIdAndUpdate(
         req.params.id,
-        { fullName, phoneNumber, address, profilePicture:req.file.path },
+        { fullName, phoneNumber, address, profilePicture },
         {
           new: true,
         }

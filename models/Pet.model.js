@@ -32,7 +32,6 @@ const petSchema = new Schema({
   dateOfBirth: Date,
   profilePicture: {
     type: String,
-    // add default img
   },
   images: [String],
   description: String,

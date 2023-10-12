@@ -26,7 +26,6 @@ const userSchema = new Schema({
   },
   profilePicture: {
     type: String,
-    // add default img
   },
   address: { street: String, postalCode: String, country: String },
   adoptedPets: [{ type: Schema.Types.ObjectId, ref: "Pet" }],

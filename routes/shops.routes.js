@@ -4,43 +4,34 @@ const Pet = require("../models/Pet.model");
 const Questionnaire = require("../models/Questionnaire.model");
 const Shop = require("../models/Shop.model");
 const router = require("express").Router();
-const fileUploader = require("../config/cloudinary.config");
-let fileURL;
 
 //POST
 
 // Create a new shop
-router.post(
-  "/new",
-  isAuthenticated,
-  fileUploader.single("shopLogo"),
-  async (req, res) => {
-    // Check if shopLogo exits, if not add default image
-    if (!shopLogo) {
-      fileURL =
-        "https://img.freepik.com/free-photo/image-icon-front-side-white-background_187299-40166.jpg?w=740&t=st=1697111573~exp=1697112173~hmac=e548437457784e86b30facfb1354d67713af48795a5e947c031295e863870727";
-    } else {
-      fileURL = req.file.path;
-    }
-
-    try {
-      const { shopName, website, pets, owner } = req.body;
-      const newShop = await Shop.create({
-        shopName,
-        website,
-        shopLogo: fileURL,
-        pets,
-        owner,
-      });
-      res.status(200).json({
-        message: "A new shop was successfully created",
-        data: newShop,
-      });
-    } catch (err) {
-      res.json(err);
-    }
+router.post("/new", isAuthenticated, async (req, res) => {
+  // Check if shopLogo exits, if not add default image
+  if (!shopLogo) {
+    shopLogo =
+      "https://img.freepik.com/free-photo/image-icon-front-side-white-background_187299-40166.jpg?w=740&t=st=1697111573~exp=1697112173~hmac=e548437457784e86b30facfb1354d67713af48795a5e947c031295e863870727";
   }
-);
+
+  try {
+    const { shopName, website, pets, owner, shopLogo } = req.body;
+    const newShop = await Shop.create({
+      shopName,
+      website,
+      shopLogo,
+      pets,
+      owner,
+    });
+    res.status(200).json({
+      message: "A new shop was successfully created",
+      data: newShop,
+    });
+  } catch (err) {
+    res.json(err);
+  }
+});
 
 //GET
 
@@ -71,32 +62,27 @@ router.get("/:id", isAuthenticated, async (req, res) => {
 //PUT
 
 // Update a shop by ID
-router.put(
-  "/:id",
-  isAuthenticated,
-  fileUploader.single("shopLogo"),
-  async (req, res) => {
-    try {
-      const { id } = req.params;
-      const { shopName, website, pets } = req.body;
-      const updatedShop = await Shop.findByIdAndUpdate(id, {
-        shopName,
-        website,
-        shopLogo: req.file.path,
-        pets,
-      });
-      if (!updatedShop) {
-        return res.status(404).json({ message: "Shop not found" });
-      }
-      res.status(200).json({
-        message: "Shop updated",
-        data: updatedShop,
-      });
-    } catch (err) {
-      res.json(err);
+router.put("/:id", isAuthenticated, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { shopName, website, pets, shopLogo } = req.body;
+    const updatedShop = await Shop.findByIdAndUpdate(id, {
+      shopName,
+      website,
+      shopLogo,
+      pets,
+    });
+    if (!updatedShop) {
+      return res.status(404).json({ message: "Shop not found" });
     }
+    res.status(200).json({
+      message: "Shop updated",
+      data: updatedShop,
+    });
+  } catch (err) {
+    res.json(err);
   }
-);
+});
 
 //DELETE
 
