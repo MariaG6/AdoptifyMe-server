@@ -38,7 +38,7 @@ const petSchema = new Schema({
   description: String,
   isAdopted: { type: Boolean, default: false },
   isReported: { type: Boolean, default: false },
-});
+}, { timestamps: true });
 
 const Pet = model("Pet", petSchema);
 
