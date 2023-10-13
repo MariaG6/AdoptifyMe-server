@@ -7,18 +7,7 @@ const router = require("express").Router();
 
 // Create a new pet
 router.post("/new", isAuthenticated, (req, res) => {
-  // Check if profilePicture exits, if not add default image
-  // if (!profilePicture) {
-  //   profilePicture =
-  //     "https://img.freepik.com/free-vector/flat-design-dog-cat-silhouette_23-2150283212.jpg?w=740&t=st=1697112348~exp=1697112948~hmac=8c585812ac327c2475bfd16aeaa1596e4f231468841d6c31707ca2bf55af89ab";
-  // }
 
-  // Handle images
-  const imagesURL = req.files.map((element) => {
-    return element.path;
-  });
-  console.log(imagesURL)
-  return
   const {
     typeOfAnimal,
     shop,
@@ -54,7 +43,7 @@ router.post("/new", isAuthenticated, (req, res) => {
       dateOfBirth,
       profilePicture,
       description,
-      images: imagesURL,
+      images,
       isAdopted,
       isReported,
     })
@@ -164,49 +153,50 @@ router.get("/:id", (req, res) => {
 //PUT
 
 // Update a pet by ID
-router.put(
-  "/:id",
-  isAuthenticated,
-  (req, res) => {
-    const { id } = req.params;
-    // Handle images
-    const imagesURL = req.files.map((element) => {
-      return element.path;
+router.put("/:id", isAuthenticated, (req, res) => {
+  const { id } = req.params;
+
+  const {
+    shop,
+    owner,
+    description,
+    breed,
+    name,
+    profilePicture,
+    images,
+    isAdopted,
+    isReported,
+  } = req.body;
+
+  Pet.findByIdAndUpdate(
+    id,
+    {
+      shop,
+      owner,
+      description,
+      images,
+      profilePicture,
+      breed,
+      name,
+      isAdopted,
+      isReported,
+    },
+    { new: true }
+  )
+    .then((updatedPet) => {
+      if (!updatedPet) {
+        return res.status(404).json({ message: "Pet not found." });
+      } else {
+        res.status(200).json({
+          message: "Pet updated",
+          data: updatedPet,
+        });
+      }
+    })
+    .catch((err) => {
+      res.json(err);
     });
-
-    const { shop, owner, description, breed, name, profilePicture, isAdopted, isReported } =
-      req.body;
-
-    Pet.findByIdAndUpdate(
-      id,
-      {
-        shop,
-        owner,
-        description,
-        images: imagesURL,
-        profilePicture,
-        breed,
-        name,
-        isAdopted,
-        isReported,
-      },
-      { new: true }
-    )
-      .then((updatedPet) => {
-        if (!updatedPet) {
-          return res.status(404).json({ message: "Pet not found." });
-        } else {
-          res.status(200).json({
-            message: "Pet updated",
-            data: updatedPet,
-          });
-        }
-      })
-      .catch((err) => {
-        res.json(err);
-      });
-  }
-);
+});
 
 //DELETE
 

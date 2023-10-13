@@ -29,11 +29,6 @@ router.post("/signup", (req, res, next) => {
     return;
   }
 
-  // Check if profilePicture exits, if not add default image
-  if(!profilePicture){
-    profilePicture = 'https://img.freepik.com/free-photo/user-profile-icon-front-side-with-white-background_187299-40010.jpg?w=740&t=st=1697111034~exp=1697111634~hmac=e362fd34e7a54368b8dc48bd44e02de9b090f35456c96e7d03f009737e7f8ac9'
-  } 
-
   // This regular expression check that the email is of a valid format
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
   if (!emailRegex.test(email)) {

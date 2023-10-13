@@ -9,12 +9,6 @@ const router = require("express").Router();
 
 // Create a new shop
 router.post("/new", isAuthenticated, async (req, res) => {
-  // Check if shopLogo exits, if not add default image
-  if (!shopLogo) {
-    shopLogo =
-      "https://img.freepik.com/free-photo/image-icon-front-side-white-background_187299-40166.jpg?w=740&t=st=1697111573~exp=1697112173~hmac=e548437457784e86b30facfb1354d67713af48795a5e947c031295e863870727";
-  }
-
   try {
     const { shopName, website, pets, owner, shopLogo } = req.body;
     const newShop = await Shop.create({
