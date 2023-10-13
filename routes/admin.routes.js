@@ -104,11 +104,11 @@ router.patch(
   isAuthenticated,
   isAdminCheckMiddleware,
   async (req, res, next) => {
-    const { fullName, phoneNumber, address } = req.body;
+    const { fullName, phoneNumber, address, profilePicture } = req.body;
     try {
       const updatedAdmin = await User.findByIdAndUpdate(
         req.params.id,
-        { fullName, phoneNumber, address },
+        { fullName, phoneNumber, address, profilePicture },
         {
           new: true,
         }
