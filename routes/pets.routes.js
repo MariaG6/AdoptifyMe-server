@@ -3,6 +3,20 @@ const Pet = require("../models/Pet.model");
 const Questionnaire = require("../models/Questionnaire.model");
 const router = require("express").Router();
 
+//GET
+
+// Get all pets
+router.get("/allPets", (req, res) => {
+  Pet.find()
+    .populate(["shop"])
+    .then((allPets) => {
+      res.status(200).json(allPets);
+    })
+    .catch((err) => {
+      res.status(500).json(err);
+    });
+});
+
 //POST
 
 // Create a new pet
@@ -120,6 +134,7 @@ router.post("/:id/adopt", isAuthenticated, async (req, res) => {
   }
 });
 
+<<<<<<< HEAD
 //GET
 
 // Get all pets
@@ -133,20 +148,23 @@ router.get("/allPets", (req, res) => {
     });
 });
 
+=======
+>>>>>>> a8bec918d43a3a073713ba69673a087e8201727c
 // Get a specific pet by ID
 router.get("/:id", (req, res) => {
   const { id } = req.params;
 
   Pet.findById(id)
+    .populate(["shop"])
     .then((onePet) => {
       if (!onePet) {
         return res.status(404).json({ message: "Pet not found." });
       } else {
-        res.json(onePet);
+        res.status(200).json(onePet);
       }
     })
     .catch((err) => {
-      res.json(err);
+      res.status(500).json(err);
     });
 });
 

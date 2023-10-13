@@ -12,7 +12,7 @@ const shopSchema = new Schema({
   },
   pets: [{ type: Schema.Types.ObjectId, ref: "Pet" }],
   owner: [{ type: Schema.Types.ObjectId, ref: "User" }],
-});
+}, { timestamps: true });
 
 const Shop = model("Shop", shopSchema);
 
