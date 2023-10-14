@@ -3,10 +3,25 @@ const Pet = require("../models/Pet.model");
 const Questionnaire = require("../models/Questionnaire.model");
 const router = require("express").Router();
 
+//GET
+
+// Get all pets
+router.get("/allPets", (req, res) => {
+  Pet.find()
+    .populate(["shop"])
+    .then((allPets) => {
+      res.status(200).json(allPets);
+    })
+    .catch((err) => {
+      res.status(500).json(err);
+    });
+});
+
 //POST
 
 // Create a new pet
 router.post("/new", isAuthenticated, (req, res) => {
+
   const {
     typeOfAnimal,
     shop,
@@ -17,13 +32,14 @@ router.post("/new", isAuthenticated, (req, res) => {
     name,
     gender,
     dateOfBirth,
-    profilePicture,
     description,
+    profilePicture,
     images,
     isAdopted,
     isReported,
   } = req.body;
 
+  // Check if desccription is empty string
   if (!description) {
     return res
       .status(400)
@@ -57,6 +73,7 @@ router.post("/new", isAuthenticated, (req, res) => {
   }
 });
 
+// Create a quesstionare of a specific pet by id
 router.post("/:id/adopt", isAuthenticated, async (req, res) => {
   const {
     designatedArea,
@@ -81,7 +98,7 @@ router.post("/:id/adopt", isAuthenticated, async (req, res) => {
 
   const adoptedPet = await Pet.findById(id);
 
-  const { _id } = req.payload
+  const { _id } = req.payload;
 
   if (!adoptedPet) {
     return res.status(404).json({ message: "Pet not found." });
@@ -108,19 +125,20 @@ router.post("/:id/adopt", isAuthenticated, async (req, res) => {
       behaviorResponse,
       preAdoptionFollowUps,
     })
-    .then(createdQue => {
-        res.status(200).json({message:"Questionnarie successuffy created"})
-    })
-    .catch((err) => {
-      res.status(500).json(err);
-    });
+      .then((createdQue) => {
+        res.status(200).json({ message: "Questionnarie successuffy created" });
+      })
+      .catch((err) => {
+        res.status(500).json(err);
+      });
   }
 });
 
+<<<<<<< HEAD
 //GET
 
 // Get all pets
-router.get("/allPets", isAuthenticated, (req, res) => {
+router.get("/allPets", (req, res) => {
   Pet.find()
     .then((allPets) => {
       res.json(allPets);
@@ -130,20 +148,23 @@ router.get("/allPets", isAuthenticated, (req, res) => {
     });
 });
 
+=======
+>>>>>>> a8bec918d43a3a073713ba69673a087e8201727c
 // Get a specific pet by ID
-router.get("/:id", isAuthenticated, (req, res) => {
+router.get("/:id", (req, res) => {
   const { id } = req.params;
 
   Pet.findById(id)
+    .populate(["shop"])
     .then((onePet) => {
       if (!onePet) {
         return res.status(404).json({ message: "Pet not found." });
       } else {
-        res.json(onePet);
+        res.status(200).json(onePet);
       }
     })
     .catch((err) => {
-      res.json(err);
+      res.status(500).json(err);
     });
 });
 
@@ -152,14 +173,15 @@ router.get("/:id", isAuthenticated, (req, res) => {
 // Update a pet by ID
 router.put("/:id", isAuthenticated, (req, res) => {
   const { id } = req.params;
+
   const {
     shop,
     owner,
     description,
-    images,
-    profilePicture,
     breed,
     name,
+    profilePicture,
+    images,
     isAdopted,
     isReported,
   } = req.body;

@@ -10,7 +10,7 @@ const router = require("express").Router();
 // Create a new shop
 router.post("/new", isAuthenticated, async (req, res) => {
   try {
-    const { shopName, website, shopLogo, pets, owner } = req.body;
+    const { shopName, website, pets, owner, shopLogo } = req.body;
     const newShop = await Shop.create({
       shopName,
       website,
@@ -59,7 +59,7 @@ router.get("/:id", isAuthenticated, async (req, res) => {
 router.put("/:id", isAuthenticated, async (req, res) => {
   try {
     const { id } = req.params;
-    const { shopName, website, shopLogo, pets } = req.body;
+    const { shopName, website, pets, shopLogo } = req.body;
     const updatedShop = await Shop.findByIdAndUpdate(id, {
       shopName,
       website,

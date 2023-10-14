@@ -5,11 +5,11 @@ const router = express.Router();
 
 // update user by id
 router.patch("/:id", isAuthenticated, async (req, res, next) => {
-  const { fullName, phoneNumber, address } = req.body;
+  const { fullName, phoneNumber, address, profilePicture } = req.body;
   try {
     const updatedUser = await User.findByIdAndUpdate(
       req.params.id,
-      { fullName, phoneNumber, address },
+      { fullName, phoneNumber, address, profilePicture },
       {
         new: true,
       }
@@ -60,5 +60,9 @@ router.get("/:id", isAuthenticated, async (req, res, next) => {
     next(err);
   }
 });
+
+
+
+
 
 module.exports = router;

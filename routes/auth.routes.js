@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
+
 // ℹ️ Handles password encryption
 const bcrypt = require("bcrypt");
 
@@ -16,10 +17,11 @@ const { isAuthenticated } = require("../middleware/jwt.middleware.js");
 // How many rounds should bcrypt run the salt (default - 10 rounds)
 const saltRounds = 10;
 
+
 // POST /auth/signup  - Creates a new user in the database
 router.post("/signup", (req, res, next) => {
   // assuming address comes in the form address: {}
-  const { email, password, fullName, phoneNumber, address } = req.body;
+  const { email, password, fullName, phoneNumber, address, profilePicture} = req.body;
 
   // Check if email or password or name are provided as empty strings
   if (email === "" || password === "" || fullName === "") {
@@ -65,6 +67,7 @@ router.post("/signup", (req, res, next) => {
         fullName,
         phoneNumber,
         address,
+        profilePicture
       });
     })
     .then((createdUser) => {

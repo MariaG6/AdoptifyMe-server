@@ -32,13 +32,13 @@ const petSchema = new Schema({
   dateOfBirth: Date,
   profilePicture: {
     type: String,
-    // add default img
+    default:"https://img.freepik.com/free-vector/flat-design-dog-cat-silhouette_23-2150283212.jpg?w=740&t=st=1697112348~exp=1697112948~hmac=8c585812ac327c2475bfd16aeaa1596e4f231468841d6c31707ca2bf55af89ab",
   },
   images: [String],
   description: String,
   isAdopted: { type: Boolean, default: false },
   isReported: { type: Boolean, default: false },
-});
+}, { timestamps: true });
 
 const Pet = model("Pet", petSchema);
 
