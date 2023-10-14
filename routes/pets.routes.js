@@ -134,22 +134,6 @@ router.post("/:id/adopt", isAuthenticated, async (req, res) => {
   }
 });
 
-<<<<<<< HEAD
-//GET
-
-// Get all pets
-router.get("/allPets", (req, res) => {
-  Pet.find()
-    .then((allPets) => {
-      res.json(allPets);
-    })
-    .catch((err) => {
-      res.json(err);
-    });
-});
-
-=======
->>>>>>> a8bec918d43a3a073713ba69673a087e8201727c
 // Get a specific pet by ID
 router.get("/:id", (req, res) => {
   const { id } = req.params;
