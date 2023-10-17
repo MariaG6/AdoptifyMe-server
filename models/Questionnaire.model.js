@@ -5,23 +5,27 @@ const questionnaireSchema = new mongoose.Schema(
   {
     designatedArea: {
       type: String,
-      enum: ["all the house", "pat of it", "Its not clear yet"],
+      enum: ["all the house", "part of it", "It's not clear yet"],
       required: [true, "This field is required."],
     },
     landlordAware: {
       type: String,
       enum: ["yes", "no"],
+      required: [true, "This field is required."],
     },
     whereStaysWhenNotHome: {
       type: String,
+      enum: ["outside the house","all the house", "part of it","with family/friends", "It's not clear yet"],
       required: [true, "This field is required."],
     },
     familyInfo: {
       type: String,
+      enum: ["yes", "no"],
       required: [true, "This field is required."],
     },
     childrenCharacteristics: {
       type: String,
+      enum: ["I dont have","calm", "energetic","responsable"],
       required: [true, "This field is required."],
     },
     annualExpenses: {
@@ -31,6 +35,7 @@ const questionnaireSchema = new mongoose.Schema(
     employed: {
       type: String,
       enum: ["yes", "no"],
+      required: [true, "This field is required."],
     },
     vacationPlans: {
       type: String,
@@ -71,6 +76,9 @@ const questionnaireSchema = new mongoose.Schema(
     preAdoptionFollowUps: {
       type: String,
       required: [true, "This field is required."],
+    },
+    observations: {
+      type:String,
     },
     pet: { type: Schema.Types.ObjectId, ref: "Pet" },
     shop: { type: Schema.Types.ObjectId, ref: "Shop" },
