@@ -30,6 +30,7 @@ const questionnaireSchema = new mongoose.Schema(
     },
     annualExpenses: {
       type: String,
+      enum: ["yes", "no"],
       required: [true, "This field is required."],
     },
     employed: {
@@ -51,6 +52,7 @@ const questionnaireSchema = new mongoose.Schema(
     },
     suitableFood: {
       type: String,
+      enum: ["leftovers","bread", "dry food","homemade food"],
       required: [true, "This field is required."],
     },
     previousAnimals: {
