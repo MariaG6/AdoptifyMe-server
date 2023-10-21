@@ -4,7 +4,6 @@ const Questionnaire = require("../models/Questionnaire.model");
 const router = require("express").Router();
 
 //GET
-
 // Get all pets
 router.get("/allPets", (req, res) => {
   Pet.find()
@@ -18,10 +17,8 @@ router.get("/allPets", (req, res) => {
 });
 
 //POST
-
 // Create a new pet
 router.post("/new", isAuthenticated, (req, res) => {
-
   const {
     typeOfAnimal,
     shop,
