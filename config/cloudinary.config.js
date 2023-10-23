@@ -1,4 +1,4 @@
-const cloudinary = require("cloudinary").v2;
+const cloudinary = require("cloudinary").v2; // Service to store images on its server and access them through a url
 const { CloudinaryStorage } = require("multer-storage-cloudinary");
 const multer = require("multer");
 

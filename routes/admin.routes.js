@@ -7,7 +7,7 @@ const Pet = require("../models/Pet.model");
 const Questionnaire = require("../models/Questionnaire.model");
 const router = express.Router();
 
-// get all admins
+// Get all admins
 router.get(
   "/",
   isAuthenticated,
@@ -22,7 +22,7 @@ router.get(
   }
 );
 
-// gets all pets
+// Gets all pets
 router.get(
   "/pets",
   isAuthenticated,
@@ -37,7 +37,7 @@ router.get(
   }
 );
 
-//   gets all users
+// Gets all users
 router.get(
   "/users",
   isAuthenticated,
@@ -55,7 +55,7 @@ router.get(
   }
 );
 
-//   gets all shops
+// Gets all shops
 router.get(
   "/shops",
   isAuthenticated,
@@ -70,17 +70,7 @@ router.get(
   }
 );
 
-// creates new admin
-// router.get(
-//   "/create-admin",
-//   isAuthenticated,
-//   isAdminCheckMiddleware,
-//   (req, res, next) => {
-//     res.status(201).json("All good in here");
-//   }
-// );
-
-// delete admin by id
+// Delete admin by id
 router.delete(
   "/:id",
   isAuthenticated,
@@ -98,7 +88,7 @@ router.delete(
   }
 );
 
-// update admin info
+// Update admin info
 router.patch(
   "/:id",
   isAuthenticated,
@@ -128,7 +118,7 @@ router.patch(
   }
 );
 
-// get admin by id
+// Get admin by id
 router.get(
   "/:id",
   isAuthenticated,
@@ -150,7 +140,7 @@ router.get(
   }
 );
 
-// reset users password
+// Reset users password
 router.patch(
   "/reset-user-password",
   isAuthenticated,
@@ -210,7 +200,7 @@ router.patch(
   }
 );
 
-// get all questionnaires
+// Get all questionnaires
 router.get(
   "/applications",
   isAuthenticated,
@@ -229,7 +219,7 @@ router.get(
   }
 );
 
-// check and add admin
+// Check and add admin
 router.get("/check-admin", async (req, res) => {
   try {
     const existingAdmin = await User.findOne({
