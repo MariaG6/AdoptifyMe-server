@@ -22,9 +22,10 @@ module.exports = (app) => {
   app.set("trust proxy", 1);
 
   // controls a very specific header to pass headers from the frontend
+  // TODO: Move to .env
   app.use(
     cors({
-      origin: [FRONTEND_URL],
+      origin: [FRONTEND_URL, "https://adoptifyme.netlify.app"],
     })
   );
 
