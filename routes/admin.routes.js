@@ -254,21 +254,4 @@ router.get(
   }
 );
 
-// Check and add admin
-router.get("/check-admin", async (req, res) => {
-  try {
-    const existingAdmin = await User.findOne({
-      email: process.env.ADMIN_EMAIL,
-    });
-
-    if (existingAdmin) {
-      return res.status(200).json({ message: "Admin already exists" });
-    }
-
-    // If email is unique, proceed to hash the password
-    const salt = bcrypt.genSaltSync(process.env.SALT_ROUNDS);
-    const hashedPassword = bcrypt.hashSync(process.env.ADMIN_PASSWORD, salt);
-
-
-
 module.exports = router;
