@@ -5,7 +5,7 @@ const questionnaireSchema = new mongoose.Schema(
   {
     designatedArea: {
       type: String,
-      enum: ["all the house", "pat of it", "Its not clear yet"],
+      enum: ["all the house", "part of it", "Its not clear yet"],
       required: [true, "This field is required."],
     },
     landlordAware: {

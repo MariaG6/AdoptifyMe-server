@@ -1,36 +1,83 @@
 const checkShopOwner = require("../middleware/isShopOwner.middleware");
 const { isAuthenticated } = require("../middleware/jwt.middleware");
-const Pet = require("../models/Pet.model");
 const Questionnaire = require("../models/Questionnaire.model");
 const Shop = require("../models/Shop.model");
 const router = require("express").Router();
+const fileUploader = require("../config/cloudinary.config");
+const Pet = require("../models/Pet.model");
 
 //POST
 
 // Create a new shop
-router.post("/new", isAuthenticated, async (req, res) => {
-  try {
-    const { shopName, website, pets, owner, shopLogo } = req.body;
-    const newShop = await Shop.create({
-      shopName,
-      website,
-      shopLogo,
-      pets,
-      owner,
-    });
-    res.status(200).json({
-      message: "A new shop was successfully created",
-      data: newShop,
-    });
-  } catch (err) {
-    res.json(err);
+router.post(
+  "/new",
+  isAuthenticated,
+  fileUploader.single("shopLogo"),
+  async (req, res, next) => {
+    try {
+      const { shopName, website } = req.body;
+      const newShop = await Shop.create({
+        shopName,
+        website,
+        shopLogo: req.file.path,
+        owner: req.payload._id,
+      });
+
+      res.status(201).json({
+        message: "A new shop was successfully created",
+        data: newShop,
+      });
+    } catch (err) {
+      next(err);
+    }
   }
-});
+);
+
+// add pet to a shop
+router.post(
+  "/:shopId/pets/new",
+  isAuthenticated,
+  fileUploader.single("profilePicture"),
+  async (req, res, next) => {
+    try {
+      const { shopId } = req.params;
+      const { typeOfAnimal, age, size, name, gender, isReported } = req.body;
+
+      // Find the shop by ID to assign the pet
+      const shop = await Shop.findById(shopId);
+
+      if (!shop) {
+        return res.status(404).json({ message: "Shop not found" });
+      }
+
+      // Create a new pet
+      const newPet = await Pet.create({
+        typeOfAnimal,
+        age,
+        size,
+        name,
+        gender,
+        isReported,
+        profilePicture: req.file?.path,
+        shop: shop._id,
+      });
+
+      shop.pets.push(newPet._id);
+      await shop.save();
+
+      res.status(201).json({
+        message: `A new pet was successfully added ${shop.shopName} shop`,
+        data: newPet,
+      });
+    } catch (err) {
+      next(err);
+    }
+  }
+);
 
 //GET
-
 // Get all shops
-router.get("/allShops", isAuthenticated, async (req, res) => {
+router.get("/allShops", async (req, res) => {
   try {
     const allShops = await Shop.find();
     res.json(allShops);
@@ -43,7 +90,7 @@ router.get("/allShops", isAuthenticated, async (req, res) => {
 router.get("/:id", isAuthenticated, async (req, res) => {
   try {
     const { id } = req.params;
-    const oneShop = await Shop.findById(id);
+    const oneShop = await Shop.findById(id).populate(["pets"]);
     if (!oneShop) {
       return res.status(404).json({ message: "Shop not found" });
     }
@@ -59,12 +106,11 @@ router.get("/:id", isAuthenticated, async (req, res) => {
 router.put("/:id", isAuthenticated, async (req, res) => {
   try {
     const { id } = req.params;
-    const { shopName, website, pets, shopLogo } = req.body;
+    const { shopName, website, shopLogo } = req.body;
     const updatedShop = await Shop.findByIdAndUpdate(id, {
       shopName,
       website,
       shopLogo,
-      pets,
     });
     if (!updatedShop) {
       return res.status(404).json({ message: "Shop not found" });
@@ -104,6 +150,7 @@ router.get(
   isAuthenticated,
   checkShopOwner,
   async (req, res) => {
+    const { id } = req.params;
     try {
       const allQuestionnaries = await Questionnaire.find({ shop: id });
       res.json(allQuestionnaries);

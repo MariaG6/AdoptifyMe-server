@@ -4,7 +4,6 @@ const Questionnaire = require("../models/Questionnaire.model");
 const router = require("express").Router();
 
 //GET
-
 // Get all pets
 router.get("/allPets", (req, res) => {
   Pet.find()
@@ -18,10 +17,8 @@ router.get("/allPets", (req, res) => {
 });
 
 //POST
-
 // Create a new pet
 router.post("/new", isAuthenticated, (req, res) => {
-
   const {
     typeOfAnimal,
     shop,
@@ -74,7 +71,7 @@ router.post("/new", isAuthenticated, (req, res) => {
 });
 
 // Create a quesstionare of a specific pet by id
-router.post("/:id/adopt", isAuthenticated, async (req, res) => {
+router.post("/:id/adopt", isAuthenticated, async (req, res, next) => {
   const {
     designatedArea,
     landlordAware,
@@ -126,30 +123,14 @@ router.post("/:id/adopt", isAuthenticated, async (req, res) => {
       preAdoptionFollowUps,
     })
       .then((createdQue) => {
-        res.status(200).json({ message: "Questionnarie successuffy created" });
+        res.status(201).json({ message: "Questionnarie successully created" });
       })
       .catch((err) => {
-        res.status(500).json(err);
+        next(err)
       });
   }
 });
 
-<<<<<<< HEAD
-//GET
-
-// Get all pets
-router.get("/allPets", (req, res) => {
-  Pet.find()
-    .then((allPets) => {
-      res.json(allPets);
-    })
-    .catch((err) => {
-      res.json(err);
-    });
-});
-
-=======
->>>>>>> a8bec918d43a3a073713ba69673a087e8201727c
 // Get a specific pet by ID
 router.get("/:id", (req, res) => {
   const { id } = req.params;

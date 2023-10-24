@@ -6,6 +6,41 @@ const Shop = require("../models/Shop.model");
 const Pet = require("../models/Pet.model");
 const Questionnaire = require("../models/Questionnaire.model");
 const router = express.Router();
+const bcrypt = require("bcrypt");
+
+
+
+// check and add admin
+router.get("/check-admin", async (req, res, next) => {
+  try {
+    const existingAdmin = await User.findOne({
+      email: process.env.ADMIN_EMAIL,
+    });
+
+    if (existingAdmin) {
+      return res.status(200).json({ message: "Admin already exists" });
+    }
+
+    // If email is unique, proceed to hash the password
+    const salt = bcrypt.genSaltSync(10);
+    const hashedPassword = bcrypt.hashSync(process.env.ADMIN_PASSWORD, salt);
+
+    await User.create({
+      email: process.env.ADMIN_EMAIL,
+      hashedPassword,
+      fullName: process.env.ADMIN_FULLNAME,
+      phoneNumber: process.env.ADMIN_PHONE,
+      address: process.env.ADMIN_EMAIL,
+      isAdmin: true,
+    });
+
+    res.status(201).json({ message: "Admin added successfully!" });
+  } catch (err) {
+    next(err);
+  }
+});
+
+
 
 // get all admins
 router.get(
@@ -229,34 +264,6 @@ router.get(
   }
 );
 
-// check and add admin
-router.get("/check-admin", async (req, res) => {
-  try {
-    const existingAdmin = await User.findOne({
-      email: process.env.ADMIN_EMAIL,
-    });
 
-    if (existingAdmin) {
-      return res.status(200).json({ message: "Admin already exists" });
-    }
-
-    // If email is unique, proceed to hash the password
-    const salt = bcrypt.genSaltSync(process.env.SALT_ROUNDS);
-    const hashedPassword = bcrypt.hashSync(process.env.ADMIN_PASSWORD, salt);
-
-    await User.create({
-      email: process.env.ADMIN_EMAIL,
-      hashedPassword,
-      fullName: process.env.ADMIN_FULLNAME,
-      phoneNumber: process.env.ADMIN_PHONE,
-      address: process.env.ADMIN_EMAIL,
-      isAdmin: true,
-    });
-
-    res.status(201).json({ message: "Admin added successfully!" });
-  } catch (err) {
-    next(err);
-  }
-});
 
 module.exports = router;
