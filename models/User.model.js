@@ -38,6 +38,7 @@ const userSchema = new Schema({
   shops: [{ type: Schema.Types.ObjectId, ref: "Shop" }],
 });
 
+
 const User = model("User", userSchema);
 
 module.exports = User;
