@@ -37,6 +37,7 @@ router.post("/new", isAuthenticated, (req, res) => {
   } = req.body;
 
   // Check if desccription is empty string
+  // Create a new Pet on the database
   if (!description) {
     return res
       .status(400)
@@ -90,6 +91,7 @@ router.post("/:id/adopt", isAuthenticated, async (req, res, next) => {
     willingnessToTrain,
     behaviorResponse,
     preAdoptionFollowUps,
+    observations,
   } = req.body;
   const { id } = req.params;
 
@@ -97,6 +99,7 @@ router.post("/:id/adopt", isAuthenticated, async (req, res, next) => {
 
   const { _id } = req.payload;
 
+  // Check if pet exists and create questionnaire on the database
   if (!adoptedPet) {
     return res.status(404).json({ message: "Pet not found." });
   } else {
@@ -121,6 +124,7 @@ router.post("/:id/adopt", isAuthenticated, async (req, res, next) => {
       willingnessToTrain,
       behaviorResponse,
       preAdoptionFollowUps,
+      observations,
     })
       .then((createdQue) => {
         res.status(201).json({ message: "Questionnarie successully created" });

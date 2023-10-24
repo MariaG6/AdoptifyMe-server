@@ -3,7 +3,7 @@ const { isAuthenticated } = require("../middleware/jwt.middleware");
 const User = require("../models/User.model");
 const router = express.Router();
 
-// update user by id
+// Update user by id
 router.patch("/:id", isAuthenticated, async (req, res, next) => {
   const { fullName, phoneNumber, address, profilePicture } = req.body;
   try {
@@ -28,7 +28,7 @@ router.patch("/:id", isAuthenticated, async (req, res, next) => {
   }
 });
 
-// delete user by id
+// Delete user by id
 router.delete("/:id", isAuthenticated, async (req, res, next) => {
   try {
     const user = await User.findByIdAndDelete(req.params.id);
@@ -42,7 +42,7 @@ router.delete("/:id", isAuthenticated, async (req, res, next) => {
   }
 });
 
-// get user by id
+// Get user by id
 router.get("/:id", isAuthenticated, async (req, res, next) => {
   try {
     const user = await User.findById(req.params.id);
@@ -60,9 +60,5 @@ router.get("/:id", isAuthenticated, async (req, res, next) => {
     next(err);
   }
 });
-
-
-
-
 
 module.exports = router;

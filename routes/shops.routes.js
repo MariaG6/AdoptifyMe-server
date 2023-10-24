@@ -2,6 +2,7 @@ const checkShopOwner = require("../middleware/isShopOwner.middleware");
 const { isAuthenticated } = require("../middleware/jwt.middleware");
 const Questionnaire = require("../models/Questionnaire.model");
 const Shop = require("../models/Shop.model");
+const User = require("../models/User.model");
 const router = require("express").Router();
 const fileUploader = require("../config/cloudinary.config");
 const Pet = require("../models/Pet.model");
@@ -97,6 +98,30 @@ router.get("/:id", isAuthenticated, async (req, res) => {
     res.json(oneShop);
   } catch (err) {
     res.json(err);
+  }
+});
+
+// Get shops by owner (user)
+router.get("/:userId", isAuthenticated, async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ error: "User does not exist" });
+    }
+
+    const userShops = await Shop.find({ owner: userId });
+
+    if (userShops.length === 0) {
+      return res.status(404).json({ message: "User has no shops" });
+    }
+
+    res.json(userShops);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Internal server error" });
   }
 });
 
