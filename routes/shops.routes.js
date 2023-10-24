@@ -128,42 +128,51 @@ router.get("/:userId", isAuthenticated, async (req, res) => {
 //PUT
 
 // Update a shop by ID
-router.put("/:id", isAuthenticated, async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { shopName, website, shopLogo } = req.body;
-    const updatedShop = await Shop.findByIdAndUpdate(id, {
-      shopName,
-      website,
-      shopLogo,
-    });
-    if (!updatedShop) {
-      return res.status(404).json({ message: "Shop not found" });
+router.patch(
+  "/:id",
+  isAuthenticated,
+  fileUploader.single("shopLogo"),
+  async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      const { shopName, website } = req.body;
+
+      const shopLogo = req.file?.path ?? req.body.shopLogo;
+
+      const updatedShop = await Shop.findByIdAndUpdate(id, {
+        shopName,
+        website,
+        shopLogo,
+      });
+      if (!updatedShop) {
+        return res.status(404).json({ message: "Shop not found" });
+      }
+      res.status(200).json({
+        message: "Shop updated",
+        data: updatedShop,
+      });
+    } catch (err) {
+      next(err);
     }
-    res.status(200).json({
-      message: "Shop updated",
-      data: updatedShop,
-    });
-  } catch (err) {
-    res.json(err);
   }
-});
+);
 
 //DELETE
 
 // Delete a shop by ID
-router.delete("/:id", isAuthenticated, (req, res) => {
+router.delete("/:id", isAuthenticated, async (req, res, next) => {
   try {
     const { id } = req.params;
-    const deletedShop = Shop.findByIdAndDelete(id);
+    const deletedShop = await Shop.findByIdAndDelete(id);
     if (!deletedShop) {
       return res.status(404).json({ message: "Shop not found" });
     }
+
     res.status(200).json({
       message: "Shop deleted",
     });
   } catch (err) {
-    res.json(err);
+    next(err);
   }
 });
 
