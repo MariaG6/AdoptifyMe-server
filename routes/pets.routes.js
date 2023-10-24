@@ -71,7 +71,7 @@ router.post("/new", isAuthenticated, (req, res) => {
 });
 
 // Create a quesstionare of a specific pet by id
-router.post("/:id/adopt", isAuthenticated, async (req, res) => {
+router.post("/:id/adopt", isAuthenticated, async (req, res, next) => {
   const {
     designatedArea,
     landlordAware,
@@ -123,10 +123,10 @@ router.post("/:id/adopt", isAuthenticated, async (req, res) => {
       preAdoptionFollowUps,
     })
       .then((createdQue) => {
-        res.status(200).json({ message: "Questionnarie successuffy created" });
+        res.status(201).json({ message: "Questionnarie successully created" });
       })
       .catch((err) => {
-        res.status(500).json(err);
+        next(err)
       });
   }
 });
