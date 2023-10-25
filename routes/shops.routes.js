@@ -39,7 +39,10 @@ router.post(
 router.post(
   "/:shopId/pets/new",
   isAuthenticated,
-  fileUploader.single("profilePicture"),
+  fileUploader.fields([
+    { name: "profilePicture", maxCount: 1 },
+    { name: "images" },
+  ]),
   async (req, res, next) => {
     try {
       const { shopId } = req.params;
@@ -60,7 +63,8 @@ router.post(
         name,
         gender,
         isReported,
-        profilePicture: req.file?.path,
+        profilePicture: req.files["profilePicture"][0]?.path,
+        images: req.files["images"].map((data) => data?.path),
         shop: shop._id,
       });
 
