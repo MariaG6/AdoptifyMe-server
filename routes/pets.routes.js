@@ -1,6 +1,7 @@
 const { isAuthenticated } = require("../middleware/jwt.middleware");
 const Pet = require("../models/Pet.model");
 const Questionnaire = require("../models/Questionnaire.model");
+const Shop = require("../models/Shop.model");
 const router = require("express").Router();
 
 //GET
@@ -14,6 +15,36 @@ router.get("/allPets", (req, res) => {
     .catch((err) => {
       res.status(500).json(err);
     });
+});
+
+// Search for pets
+router.get("/search", async (req, res, next) => {
+  try {
+    const { gender, typeOfAnimal, size } = req.query;
+
+    // Create a query object to filter pets
+    const query = {};
+
+    if (gender) {
+      query.gender = gender;
+    }
+
+    if (typeOfAnimal) {
+      query.typeOfAnimal = typeOfAnimal;
+    }
+
+    if (size) {
+      query.size = size;
+    }
+
+    const matchingPets = await Pet.find({ $or: [query] });
+
+    console.log(matchingPets);
+
+    res.status(200).json(matchingPets);
+  } catch (err) {
+    next(err);
+  }
 });
 
 //POST
@@ -130,7 +161,7 @@ router.post("/:id/adopt", isAuthenticated, async (req, res, next) => {
         res.status(201).json({ message: "Questionnarie successully created" });
       })
       .catch((err) => {
-        next(err)
+        next(err);
       });
   }
 });

@@ -16,10 +16,11 @@ router.post(
   fileUploader.single("shopLogo"),
   async (req, res, next) => {
     try {
-      const { shopName, website } = req.body;
+      const { shopName, website, location } = req.body;
       const newShop = await Shop.create({
         shopName,
         website,
+        location,
         shopLogo: req.file.path,
         owner: req.payload._id,
       });
