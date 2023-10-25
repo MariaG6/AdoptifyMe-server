@@ -46,7 +46,16 @@ router.post(
   async (req, res, next) => {
     try {
       const { shopId } = req.params;
-      const { typeOfAnimal, age, size, name, gender, isReported } = req.body;
+      const {
+        typeOfAnimal,
+        age,
+        size,
+        name,
+        gender,
+        isReported,
+        description,
+        breed,
+      } = req.body;
 
       // Find the shop by ID to assign the pet
       const shop = await Shop.findById(shopId);
@@ -60,9 +69,11 @@ router.post(
         typeOfAnimal,
         age,
         size,
+        breed,
         name,
         gender,
         isReported,
+        description,
         profilePicture: req.files["profilePicture"][0]?.path,
         images: req.files["images"].map((data) => data?.path),
         shop: shop._id,

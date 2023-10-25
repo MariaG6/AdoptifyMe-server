@@ -32,7 +32,7 @@ const userSchema = new Schema({
     default:
       "https://img.freepik.com/free-photo/user-profile-icon-front-side-with-white-background_187299-40010.jpg?w=740&t=st=1697111034~exp=1697111634~hmac=e362fd34e7a54368b8dc48bd44e02de9b090f35456c96e7d03f009737e7f8ac9",
   },
-  address: { street: String, postalCode: String, country: String },
+  address: String,
   adoptedPets: [{ type: Schema.Types.ObjectId, ref: "Pet" }],
   reportedPets: [{ type: Schema.Types.ObjectId, ref: "Pet" }],
   shops: [{ type: Schema.Types.ObjectId, ref: "Shop" }],

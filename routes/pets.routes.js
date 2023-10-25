@@ -239,10 +239,11 @@ router.delete("/:id", isAuthenticated, (req, res) => {
   const { id } = req.params;
 
   Pet.findByIdAndDelete(id)
-    .then((deletedPet) => {
+    .then(async (deletedPet) => {
       if (!deletedPet) {
         return res.status(404).json({ message: "Pet not found." });
       } else {
+        await Shop.updateMany({ pets: id }, { $pull: { pets: id } });
         res.json({ message: "Pet deleted" });
       }
     })
