@@ -75,7 +75,7 @@ router.post(
         isReported,
         description,
         profilePicture: req.files["profilePicture"][0]?.path,
-        images: req.files["images"].map((data) => data?.path),
+        images: req.files["images"]?.map((data) => data?.path),
         shop: shop._id,
       });
 
@@ -94,12 +94,12 @@ router.post(
 
 //GET
 // Get all shops
-router.get("/allShops", async (req, res) => {
+router.get("/allShops", async (req, res, next) => {
   try {
     const allShops = await Shop.find();
     res.json(allShops);
   } catch (err) {
-    res.json(err);
+    next(err);
   }
 });
 
@@ -118,7 +118,7 @@ router.get("/:id", isAuthenticated, async (req, res) => {
 });
 
 // Get shops by owner (user)
-router.get("/:userId", isAuthenticated, async (req, res) => {
+router.get("/user/:userId", isAuthenticated, async (req, res, next) => {
   try {
     const { userId } = req.params;
 
@@ -137,12 +137,11 @@ router.get("/:userId", isAuthenticated, async (req, res) => {
     res.json(userShops);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: "Internal server error" });
+    next(err);
   }
 });
 
 //PUT
-
 // Update a shop by ID
 router.patch(
   "/:id",
@@ -199,13 +198,14 @@ router.get(
   "/:id/questionnaries",
   isAuthenticated,
   checkShopOwner,
-  async (req, res) => {
+  async (req, res, next) => {
     const { id } = req.params;
     try {
       const allQuestionnaries = await Questionnaire.find({ shop: id });
+      console.log(allQuestionnaries);
       res.json(allQuestionnaries);
     } catch (err) {
-      res.json(err);
+      next(err);
     }
   }
 );

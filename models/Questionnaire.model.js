@@ -15,7 +15,13 @@ const questionnaireSchema = new mongoose.Schema(
     },
     whereStaysWhenNotHome: {
       type: String,
-      enum: ["outside the house","all the house", "part of it","with family/friends", "It's not clear yet"],
+      enum: [
+        "outside the house",
+        "all the house",
+        "part of it",
+        "with family/friends",
+        "It's not clear yet",
+      ],
       required: [true, "This field is required."],
     },
     familyInfo: {
@@ -25,7 +31,7 @@ const questionnaireSchema = new mongoose.Schema(
     },
     childrenCharacteristics: {
       type: String,
-      enum: ["I dont have","calm", "energetic","responsable"],
+      enum: ["I dont have", "calm", "energetic", "responsable"],
       required: [true, "This field is required."],
     },
     annualExpenses: {
@@ -52,7 +58,7 @@ const questionnaireSchema = new mongoose.Schema(
     },
     suitableFood: {
       type: String,
-      enum: ["leftovers","bread", "dry food","homemade food"],
+      enum: ["leftovers", "bread", "dry food", "homemade food"],
       required: [true, "This field is required."],
     },
     previousAnimals: {
@@ -80,7 +86,7 @@ const questionnaireSchema = new mongoose.Schema(
       required: [true, "This field is required."],
     },
     observations: {
-      type:String,
+      type: String,
     },
     pet: { type: Schema.Types.ObjectId, ref: "Pet" },
     shop: { type: Schema.Types.ObjectId, ref: "Shop" },
