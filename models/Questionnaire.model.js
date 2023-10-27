@@ -92,6 +92,7 @@ const questionnaireSchema = new mongoose.Schema(
     shop: { type: Schema.Types.ObjectId, ref: "Shop" },
     user: { type: Schema.Types.ObjectId, ref: "User" },
     isAccepted: { type: Boolean, default: false },
+    isRejected: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

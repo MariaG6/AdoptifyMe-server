@@ -236,46 +236,102 @@ router.get(
 );
 
 // Put to accept the application
-router.put(
+router.patch(
   "/:id/questionnaries/:questionnarieId/accept",
   isAuthenticated,
   checkShopOwner,
-  async (req, res) => {
+  async (req, res, next) => {
     const { questionnarieId } = req.params;
     try {
       const questionnarie = await Questionnaire.findById(questionnarieId);
       if (!questionnarieId) {
         return res.status(404).json({ message: "Questionnaire not found" });
       }
-      questionnarie.pet.isAdopted = true;
+      // questionnarie.pet.isAdopted = true;
+      // questionnarie.isAccepted = true;
+      // questionnarie.save();
+
+      const pet = await Pet.findById(questionnarie.pet);
+
+      if (!pet) {
+        return res.status(404).json({ message: "Can't find pet!" });
+      }
+      if (pet.isAdopted) {
+        return res.status(405).json({ message: "Pet is already adopted!" });
+      }
+
+      const applicant = await User.findById(questionnarie.user);
+
+      if (!applicant) {
+        return res
+          .status(404)
+          .json({ message: "Can't seem to find the applicant!" });
+      }
+
+      pet.isAdopted = true;
+      pet.owner = applicant._id;
+      applicant.adoptedPets.push(pet._id);
       questionnarie.isAccepted = true;
+      questionnarie.isRejected = false;
+
+      pet.save();
+      applicant.save();
+      questionnarie.save();
+
       res
-        .status(200)
+        .status(201)
         .json({ message: "Application to adopt accepted successfully" });
     } catch (err) {
-      res.json(err);
+      next(err);
     }
   }
 );
 
-// Put to reject the application
-
-router.put(
+// patch to reject the application
+router.patch(
   "/:id/questionnaries/:questionnarieId/reject",
   isAuthenticated,
   checkShopOwner,
-  async (req, res) => {
+  async (req, res, next) => {
     const { questionnarieId } = req.params;
     try {
       const questionnarie = await Questionnaire.findById(questionnarieId);
       if (!questionnarie) {
         return res.status(404).json({ message: "Questionnaire not found" });
       }
+
+      const pet = await Pet.findById(questionnarie.pet);
+
+      if (!pet) {
+        return res.status(404).json({ message: "Can't find pet!" });
+      }
+      if (!pet.isAdopted) {
+        return res.status(405).json({ message: "Pet is not adopted!" });
+      }
+
+      const applicant = await User.findById(questionnarie.user);
+
+      if (!applicant) {
+        return res
+          .status(404)
+          .json({ message: "Can't seem to find the applicant!" });
+      }
+
+      pet.isAdopted = false;
+      pet.owner = null;
+      applicant.adoptedPets.pop(pet._id);
+      questionnarie.isAccepted = false;
+      questionnarie.isRejected = true;
+
+      pet.save();
+      applicant.save();
+      questionnarie.save();
+
       res
-        .status(200)
+        .status(201)
         .json({ message: "Application to adopt rejected successfully" });
     } catch (err) {
-      res.json(err);
+      next(err);
     }
   }
 );
