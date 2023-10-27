@@ -226,8 +226,6 @@ router.get(
         return res.status(404).json({ message: "Questionnaire not found" });
       }
 
-      console.log(questionnarie);
-
       res.json(questionnarie);
     } catch (err) {
       res.json(err);
