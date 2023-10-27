@@ -104,7 +104,7 @@ router.get("/allShops", async (req, res, next) => {
 });
 
 // Get a specific shop by ID
-router.get("/:id", isAuthenticated, async (req, res) => {
+router.get("/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const oneShop = await Shop.findById(id).populate(["pets"]);

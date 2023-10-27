@@ -18,6 +18,18 @@ router.get("/allPets", (req, res) => {
     });
 });
 
+// get all adopted pets
+router.get("/all-adopted", (req, res, next) => {
+  Pet.find({ isAdopted: true })
+    .populate()
+    .then((allPets) => {
+      res.status(200).json(allPets);
+    })
+    .catch((err) => {
+      next(err);
+    });
+});
+
 // Search for pets
 router.get("/search", async (req, res, next) => {
   try {
