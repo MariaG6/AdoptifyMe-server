@@ -219,10 +219,15 @@ router.get(
   async (req, res) => {
     const { questionnarieId } = req.params;
     try {
-      const questionnarie = await Questionnaire.findById(questionnarieId);
+      const questionnarie = await Questionnaire.findById(
+        questionnarieId
+      ).populate(["pet", "shop", "user"]);
       if (!questionnarieId) {
         return res.status(404).json({ message: "Questionnaire not found" });
       }
+
+      console.log(questionnarie);
+
       res.json(questionnarie);
     } catch (err) {
       res.json(err);

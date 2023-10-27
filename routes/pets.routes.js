@@ -3,6 +3,7 @@ const Pet = require("../models/Pet.model");
 const Questionnaire = require("../models/Questionnaire.model");
 const Shop = require("../models/Shop.model");
 const router = require("express").Router();
+const fileUploader = require("../config/cloudinary.config");
 
 //GET
 // Get all pets
@@ -187,50 +188,64 @@ router.get("/:id", (req, res) => {
 //PUT
 
 // Update a pet by ID
-router.put("/:id", isAuthenticated, (req, res) => {
-  const { id } = req.params;
+router.patch(
+  "/:id",
+  isAuthenticated,
+  fileUploader.fields([
+    { name: "profilePicture", maxCount: 1 },
+    { name: "images" },
+  ]),
+  (req, res, next) => {
+    const { id } = req.params;
+    try {
+      let { description, breed, name, isAdopted, isReported } = req.body;
 
-  const {
-    shop,
-    owner,
-    description,
-    breed,
-    name,
-    profilePicture,
-    images,
-    isAdopted,
-    isReported,
-  } = req.body;
+      let profilePicture = null;
 
-  Pet.findByIdAndUpdate(
-    id,
-    {
-      shop,
-      owner,
-      description,
-      images,
-      profilePicture,
-      breed,
-      name,
-      isAdopted,
-      isReported,
-    },
-    { new: true }
-  )
-    .then((updatedPet) => {
-      if (!updatedPet) {
-        return res.status(404).json({ message: "Pet not found." });
+      if (
+        req.files["profilePicture"] &&
+        req.files["profilePicture"][0] &&
+        req.files["profilePicture"][0].path
+      ) {
+        profilePicture = req.files["profilePicture"][0].path;
       } else {
-        res.status(200).json({
-          message: "Pet updated",
-          data: updatedPet,
-        });
+        profilePicture = req.body.profilePicture;
       }
-    })
-    .catch((err) => {
-      res.json(err);
-    });
-});
+
+      let images =
+        req.files["images"]?.map((data) => data?.path) || req.body.images;
+
+      Pet.findByIdAndUpdate(
+        id,
+        {
+          description,
+          images: images,
+          profilePicture,
+          breed,
+          name,
+          isAdopted,
+          isReported,
+        },
+        { new: true }
+      )
+        .then((updatedPet) => {
+          if (!updatedPet) {
+            return res.status(404).json({ message: "Pet not found." });
+          } else {
+            res.status(201).json({
+              message: "Pet updated",
+              data: updatedPet,
+            });
+          }
+        })
+        .catch((err) => {
+          next(err);
+        });
+    } catch (err) {
+      next(err);
+    }
+  }
+);
 
 //DELETE
 
@@ -251,8 +266,5 @@ router.delete("/:id", isAuthenticated, (req, res) => {
       res.json(err);
     });
 });
-
-
-
 
 module.exports = router;
