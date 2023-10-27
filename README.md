@@ -95,4 +95,4 @@ If you wish to contribute to this project, please follow these steps:
 
 [Franklin](https://github.com/franklinosei) & [María](https://github.com/MariaG6)
 
-Thank you for using and contributing to the AdoptifyMe Server! 👋
+<p align="center"> Thank you for using and contributing to the AdoptifyMe Server! 👋 <p/>
