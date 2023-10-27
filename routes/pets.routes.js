@@ -8,7 +8,7 @@ const fileUploader = require("../config/cloudinary.config");
 //GET
 // Get all pets
 router.get("/allPets", (req, res) => {
-  Pet.find()
+  Pet.find({ isAdopted: false })
     .populate(["shop"])
     .then((allPets) => {
       res.status(200).json(allPets);

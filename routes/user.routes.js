@@ -54,7 +54,11 @@ router.delete("/:id", isAuthenticated, async (req, res, next) => {
 // Get user by id
 router.get("/:id", isAuthenticated, async (req, res, next) => {
   try {
-    const user = await User.findById(req.params.id);
+    const user = await User.findById(req.params.id).populate([
+      "adoptedPets",
+      "reportedPets",
+      "shops",
+    ]);
 
     if (!user) {
       return res.status(404).json({ error: "User does not exist" });

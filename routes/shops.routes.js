@@ -317,7 +317,9 @@ router.patch(
 
       pet.isAdopted = false;
       pet.owner = null;
-      applicant.adoptedPets.pop(pet._id);
+      applicant.adoptedPets.filter(
+        (id) => id.toString() !== pet._id.toString()
+      );
       questionnarie.isAccepted = false;
       questionnarie.isRejected = true;
 
