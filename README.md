@@ -47,7 +47,7 @@ To set up and run Adoptify Server locally, follow these steps:
 4. Start the server:
 
    ```bash
-   npm run start
+   npm run dev
    ```
 
 The server will be accessible at the specified port (default: 3000).
@@ -87,6 +87,9 @@ If you wish to contribute to this project, please follow these steps:
 3. Make your changes, document any new features or modifications, and ensure the application is working correctly.
 
 4. Submit a Pull Request with your changes.
+
+## 🚀 Deployment here! 
+👉 [AdoptifyMe](https://adoptifyme.netlify.app/)
 
 ## Authors
 
