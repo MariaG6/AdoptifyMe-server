@@ -12,7 +12,7 @@ AdoptifyMe is a web platform designed to simplify the process of pet adoption fr
 - [Error Handling](#error-handling)
 - [API Routes](#api-routes)
 - [Contributing](#contributing)
-- [License](#license)
+- [Authors](#authors)
 
 ## Project Overview
 
